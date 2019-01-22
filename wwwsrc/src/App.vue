@@ -1,24 +1,34 @@
 <template>
   <div id="app">
-    <nav class="navbar navbar-default row">
-      <div class="col-3 d-flex justify-content-start">
-        <router-link :to="{name: 'dashboard'}">
-          Go to Dashboard
-        </router-link>
-      </div>
-      <div class="col-4 d-flex justify-content-start">
-        <router-link :to="{name: 'home'}">
-          Go Home
-        </router-link>
-      </div>
-      <div class="col-3 web-title justify-content-center">
-        <h1>Keepr</h1>
-      </div>
-      <div class="col-3 d-flex justify-content-end">
-        <button @click="logout">Logout</button>
-      </div>
-    </nav>
-    <router-view />
+
+    <div class="container-fluid">
+      <nav class="navbar navbar-default row">
+        <div class="col-3 d-flex justify-content-start">
+          <router-link :to="{name: 'dashboard'}">
+            Go to Dashboard
+          </router-link>
+        </div>
+        <div class="col-4 d-flex justify-content-start">
+          <router-link :to="{name: 'home'}">
+            Go Home
+          </router-link>
+        </div>
+        <div class="col-3 web-title justify-content-center">
+          <h1>Keepr</h1>
+        </div>
+        <div class="col-3 d-flex justify-content-end">
+          <div v-if="isAuthenticated()">
+            <button @click="logout">Logout</button>
+          </div>
+          <div v-else>
+            <router-link :to="{name: 'login'}">
+              <button>Login</button>
+            </router-link>
+          </div>
+        </div>
+      </nav>
+      <router-view />
+    </div>
   </div>
 
 </template>
@@ -28,6 +38,13 @@
       logout() {
         this.$store.dispatch('logout')
       },
+      isAuthenticated() {
+        if (this.$store.state.user.id) {
+          return true
+        } else {
+          return false
+        }
+      }
 
     }
   }
