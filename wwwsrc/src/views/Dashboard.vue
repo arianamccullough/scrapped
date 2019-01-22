@@ -32,6 +32,8 @@
 </template>
 
 <script>
+  import vault from '@/components/Vault.vue'
+
   export default {
     name: "dashboard",
 
@@ -45,16 +47,19 @@
       };
     },
     mounted() {
-      this.$store.dispatch('authenticate')
+      // this.$store.dispatch('authenticate')
       if (!this.$store.state.user.id) {
         this.$router.push({ name: "login" });
         this.$store.dispatch("getVaults")
-
+        this.$store.dispatch('getVaults', this.newVault)
       }
+    },
+    components: {
+      vault
     },
     computed: {
       vaults() {
-        return this.$store.state.vaults;
+        return this.$store.state.vaults || []
       }
     },
     methods: {

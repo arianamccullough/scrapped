@@ -35,6 +35,7 @@ export default new Router({
     {
       path: '/vaults/:vaultId',
       name: 'onevault',
+      props: true,
       component: OneVault
     },
     {
