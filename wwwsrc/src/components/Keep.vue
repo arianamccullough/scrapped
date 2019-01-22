@@ -1,6 +1,6 @@
 <template>
   <div class="keep card m-2">
-    <h4><b>{{keep.name}} </b><i @click="deleteKeep" class="fas fa-trash-alt"></i></h4>
+    <h4><b>{{keep.name}} </b></h4>
     <!-- <p><i>{{keep.description}}</i></p> -->
     <img :src="keep.img">
     <div class="row">
@@ -9,7 +9,11 @@
     </div>
     <div class="row">
       <div class="col-6">
-        <button>View</button>
+        <!-- <router-link :to="{name: 'onekeep'}"> -->
+        <button @click="makeTargetKeep()">
+          View Keep
+        </button>
+        <!-- </router-link> -->
       </div>
       <div class="col-6">
         <div class="dropdown">
@@ -17,7 +21,7 @@
             aria-haspopup="true" aria-expanded="false">
             Save Keep To... </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <p v-for="keep in keeps" @click="saveKeep(vault._id)">{{vault.name}}</p>
+            <!-- <p v-for="keep in keeps" @click="saveKeep(vault._id)">{{vault.name}}</p> -->
           </div>
         </div>
       </div>
@@ -32,20 +36,22 @@
     name: 'keep',
     data() {
       return {
-        // newKeep: {
-        //   name: '',
-        //   description: '',
-        //   vaultId: ''
-        // }
+
       }
     },
 
     computed: {
 
     },
+
+
     props: ['keep'],
 
     methods: {
+      makeTargetKeep() {
+        this.$router.push({ name: "onekeep", params: { keepId: this.keep.id } })
+        this.$store.dispatch("makeTargetKeep", this.keep)
+      },
       deleteKeep() {
         this.$store.dispatch('deleteKeep', this.keep)
       },

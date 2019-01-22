@@ -24,6 +24,7 @@ export default new Vuex.Store({
     vaults: [],
     keep: {},
     keeps: [],
+    publicPost: [],
   },
   mutations: {
     setUser(state, user) {
@@ -40,7 +41,12 @@ export default new Vuex.Store({
     },
     setKeeps(state, keeps) {
       state.keeps = keeps
+    },
+    publicPost(state, publicPost) {
+      state.publicPost = publicPost
     }
+
+
 
   },
   actions: {
@@ -91,6 +97,7 @@ export default new Vuex.Store({
           commit('setVaults', res.data)
         })
     },
+
     addVault({ commit, dispatch }, vaultData) {
       api.post('vaults', vaultData)
         .then(v => {
@@ -113,20 +120,32 @@ export default new Vuex.Store({
           commit('setKeeps', res.data)
         })
     },
+
     addKeep({ commit, dispatch }, keepData) {
       api.post('keeps', keepData)
-        .then(v => {
+        .then(k => {
           dispatch('getAllKeeps')
         })
         .catch(e => {
           console.log('addkeep failed')
         })
     },
+
     deleteKeep({ commit, dispatch }, keepId) {
       api.delete('keeps/' + keepId)
         .then(res => {
           dispatch('getAllKeeps')
         })
+    },
+
+    getKeep({ commit, dispatch }, keepId) {
+      api.get('keeps/' + keepId)
+        .then(res => {
+          commit('setKeep', res.data)
+        })
+    },
+    makeTargetKeep({ commit, dispatch }, payload) {
+      commit("setKeep", payload)
     },
 
     //My Vault/Keep
@@ -135,6 +154,14 @@ export default new Vuex.Store({
       api.get('/keeps/' + vaultId)
         .then(res => {
           commit('setKeeps', res.data)
+        })
+    },
+
+
+    getVault({ commit, dispatch }, vaultId, ) {
+      api.get('vaults/' + vaultId)
+        .then(res => {
+          commit('setVault', res.data)
         })
     },
   }

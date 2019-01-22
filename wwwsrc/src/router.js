@@ -5,9 +5,9 @@ import Home from './views/Home.vue'
 // @ts-ignore
 import Login from './views/Login.vue'
 // @ts-ignore
-import MyKeep from './views/MyKeep.vue'
+import OneKeep from './views/OneKeep.vue'
 // @ts-ignore
-import MyVault from './views/MyVault.vue'
+import OneVault from './views/OneVault.vue'
 // @ts-ignore
 import Dashboard from './views/Dashboard.vue'
 
@@ -27,14 +27,15 @@ export default new Router({
     },
 
     {
-      path: '/mykeep',
-      name: 'mykeep',
-      component: MyKeep
+      path: '/keeps/:keepId',
+      name: 'onekeep',
+      props: true,
+      component: OneKeep
     },
     {
-      path: '/myvault',
-      name: 'myvault',
-      component: MyVault
+      path: '/vaults/:vaultId',
+      name: 'onevault',
+      component: OneVault
     },
     {
       path: '/dashboard',

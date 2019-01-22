@@ -2,13 +2,13 @@
   <div class="home">
 
     <h1>Welcome Home</h1>
-    <form @submit="addKeep">
+    <form @submit.prevent="addKeep">
       <input type="text" v-model="newKeep.name" placeholder="Name..." name="Name">
       <input type="text" v-model="newKeep.img" placeholder="Image..." name="Img">
       <input type="text" v-model="newKeep.description" placeholder="Description..." name="Description">
-      <input type="number" v-model="newKeep.zip" placeholder="Zip..." name="Location">
+      <!-- <input type="number" v-model="newKeep.zip" placeholder="Zip..." name="Location"> -->
       <label for="isPrivate">
-        Private?
+        Keep Private?
         <input type="checkbox" v-model="newKeep.isPrivate" name="isPrivate">
       </label>
 
@@ -16,8 +16,10 @@
       <button type="submit">Add Keep</button>
     </form>
     <div class="row">
-      <div v-for="keep in keeps" class="col-4">
-        <keep :keep="keep"></keep>
+      <div v-for="keep in keeps">
+        <div v-show="keep.isPrivate == false">
+          <keep :keep="keep"></keep>
+        </div>
       </div>
     </div>
 
@@ -44,9 +46,7 @@
       keeps() {
         return this.$store.state.keeps || []
       }
-    },
-    mounted() {
-      this.$store.dispatch("authenticate")
+
     },
     components: {
       keep
@@ -56,7 +56,8 @@
       addKeep() {
         this.$store.dispatch("addKeep", this.newKeep);
         this.newKeep = { name: "", img: "", description: "", location: "", isPrivate: "" };
-      }
+      },
+
     },
     created() {
       this.$store.dispatch('getAllKeeps', this.newKeep)

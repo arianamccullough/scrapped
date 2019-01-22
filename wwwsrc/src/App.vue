@@ -44,7 +44,10 @@
         } else {
           return false
         }
-      }
+      },
+      mounted() {
+        this.$store.dispatch("authenticate");
+      },
 
     }
   }
