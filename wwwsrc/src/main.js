@@ -7,6 +7,7 @@ import store from './store'
 
 Vue.config.productionTip = false
 
+// @ts-ignore
 new Vue({
   router,
   store,
