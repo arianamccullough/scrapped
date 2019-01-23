@@ -12,7 +12,7 @@
   export default {
     name: 'onekeep',
     mounted() {
-      // this.$store.dispatch("authenticate")
+      this.$store.dispatch("authenticate")
       if (!this.keeps.length) {
         this.$store.dispatch("getKeep", this.$route.params.keepId)
       }

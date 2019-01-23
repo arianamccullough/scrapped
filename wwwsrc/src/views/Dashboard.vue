@@ -50,8 +50,7 @@
       // this.$store.dispatch('authenticate')
       if (!this.$store.state.user.id) {
         this.$router.push({ name: "login" });
-        this.$store.dispatch("getVaults")
-        this.$store.dispatch('getVaults', this.newVault)
+        // this.$store.dispatch("getVaults")
       }
     },
     components: {

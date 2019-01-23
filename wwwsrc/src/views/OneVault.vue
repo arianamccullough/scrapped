@@ -2,20 +2,22 @@
   <div class="onevault">
 
     <vault :vault="vault"></vault>
+    <div v-for="keep in keeps">
+      <keep :keep="keep"></keep>
+    </div>
 
   </div>
 </template>
 
 <script>
   import vault from '@/components/Vault.vue'
+  import keep from '@/components/Keep.vue'
 
   export default {
     name: 'onevault',
     mounted() {
       // this.$store.dispatch("authenticate")
-      if (!this.vaults.length) {
-        this.$store.dispatch("getVault", this.$route.params.vaultId)
-      }
+      this.$store.dispatch("getVault", this.$route.params.vaultId)
 
     },
     data() {
@@ -24,7 +26,8 @@
     },
 
     components: {
-      vault
+      vault,
+      keep
     },
     computed: {
       vault() {
@@ -32,10 +35,15 @@
       },
       vaults() {
         return this.$store.state.vaults
+      },
+      keeps() {
+        return this.$store.state.keeps || []
       }
     },
     methods: {
-
+      getKeeps() {
+        this.$store.dispatch('getKeeps', this.keeps)
+      },
     }
   }
 

@@ -44,12 +44,12 @@
         } else {
           return false
         }
-      },
-      mounted() {
-        this.$store.dispatch("authenticate");
-      },
+      }
+    },
+    mounted() {
+      this.$store.dispatch("authenticate");
+    },
 
-    }
   }
 </script>
 

@@ -54,9 +54,9 @@ DROP TABLE vaults;
 --     PRIMARY KEY (id)
 -- );
 
-INSERT INTO keeps (name, description, img, location, isPrivate) VALUES("Ice", "It's cold.", "https://www.foodnetwork.com/fn-dish/news/2014/10/pure-and-simple-the-cold-truth-about-clear-ice", 98765, 1)
-INSERT INTO keeps (name, description, img, location, isPrivate) VALUES("The sun", "It's hot.", "https://static.bhphotovideo.com/explora/sites/default/files/styles/top_shot/public/ts-space-sun-and-solar-viewing-facts-versus-fiction.jpg?itok=gaBs6QMS", 98765, 1)
-INSERT INTO keeps (name, description, img, location, isPrivate) VALUES("A unihorn", "It's awesome.", "https://www.swarovski.com/medias/?context=bWFzdGVyfHJvb3R8NTQzMjl8aW1hZ2UvanBlZ3xoZTEvaGU4LzkwMTUwODc1MzAwMTQuanBnfDFkMmZhMWI4YTQ2NmYxNDM1ZGJiYmQ3Mjk0YzJhNDQ3NzljZTUwOWE5MjJmNDY4ZmU1YTlmODViNDgzY2Q2ZGM", 87654, 0);
+-- INSERT INTO keeps (name, description, img, location, isPrivate) VALUES("Ice", "It's cold.", "https://www.foodnetwork.com/fn-dish/news/2014/10/pure-and-simple-the-cold-truth-about-clear-ice", 98765, 1)
+-- INSERT INTO keeps (name, description, img, location, isPrivate) VALUES("The sun", "It's hot.", "https://static.bhphotovideo.com/explora/sites/default/files/styles/top_shot/public/ts-space-sun-and-solar-viewing-facts-versus-fiction.jpg?itok=gaBs6QMS", 98765, 1)
+-- INSERT INTO keeps (name, description, img, location, isPrivate) VALUES("A unihorn", "It's awesome.", "https://www.swarovski.com/medias/?context=bWFzdGVyfHJvb3R8NTQzMjl8aW1hZ2UvanBlZ3xoZTEvaGU4LzkwMTUwODc1MzAwMTQuanBnfDFkMmZhMWI4YTQ2NmYxNDM1ZGJiYmQ3Mjk0YzJhNDQ3NzljZTUwOWE5MjJmNDY4ZmU1YTlmODViNDgzY2Q2ZGM", 87654, 0);
 
 
 -- SELECT * FROM keeps

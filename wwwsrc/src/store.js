@@ -101,7 +101,7 @@ export default new Vuex.Store({
     addVault({ commit, dispatch }, vaultData) {
       api.post('vaults', vaultData)
         .then(v => {
-          dispatch('getVaults')
+          dispatch('getVaults', vaultData)
         })
         .catch(e => {
           console.log('addvault failed')
@@ -151,7 +151,7 @@ export default new Vuex.Store({
     //My Vault/Keep
     // Get all keeps with certain vaultId
     getMyKeeps({ commit, dispatch }, vaultId) {
-      api.get('/keeps/' + vaultId)
+      api.get('vaultkeeps/' + vaultId)
         .then(res => {
           commit('setKeeps', res.data)
         })
@@ -162,6 +162,7 @@ export default new Vuex.Store({
       api.get('vaults/' + vaultId)
         .then(res => {
           commit('setVault', res.data)
+          dispatch('getMyKeeps', vaultId)
         })
     },
   }

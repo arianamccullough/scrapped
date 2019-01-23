@@ -16,7 +16,7 @@
             aria-haspopup="true" aria-expanded="false">
             Save Keep To... </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-     <p v-for="keep in keeps" @click="saveKeep(vault._id)">{{vault.name}}</p> 
+     <p v-for="keep in keeps" @click="saveKeep(vault.id)">{{vault.name}}</p> 
       </div>
         </div>
       </div>
