@@ -34,7 +34,7 @@
 -- SELECT * FROM vaults
 
 -- DELETE FROM vaults WHERE id = 0;
-DROP TABLE vaults;
+-- DROP TABLE vaults;
 
 -- CREATE TABLE keeps (
 --     id int NOT NULL AUTO_INCREMENT,
