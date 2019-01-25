@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using keepr.Models;
-using keepr.Repositories;
+using Keepr.Models;
+using Keepr.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace keepr.Controllers
+namespace Keepr.Controllers
 {
+
   [Route("api/[controller]")]
   [ApiController]
   public class KeepsController : ControllerBase
@@ -18,62 +20,58 @@ namespace keepr.Controllers
       _repo = repo;
     }
 
-    // GET api/values
+    //get all keeps for home page
     [HttpGet]
-    public ActionResult<IEnumerable<Keep>> Get()
+    public ActionResult<IEnumerable<Keep>> GetHomeKeeps()
     {
-
-      return Ok(_repo.GetAll());
+      return Ok(_repo.GetHomeKeeps());
     }
 
-    // GET api/values/5
-    [HttpGet("{id}")]
-    public ActionResult<Keep> Get(int id)
+    [HttpGet("user")]
+    [Authorize]
+    public ActionResult<IEnumerable<Keep>> GetMyKeeps()
     {
-      Keep result = _repo.GetById(id);
-      if (result != null)
+      var userId = HttpContext.User.Identity.Name;
+      IEnumerable<Keep> result = _repo.GetMyKeeps(userId);
+      return Ok(result);
+    }
+
+    [HttpGet("{keepId}")]
+    public ActionResult<Keep> GetAKeep(int keepId)
+    {
+      return Ok(_repo.GetAKeep(keepId));
+    }
+
+    [HttpPost]
+    [Authorize]
+    public ActionResult<Keep> AddKeep(KeepModel setKeep)
+    {
+      var userId = HttpContext.User.Identity.Name;
+      setKeep.UserId = userId;
+      return Ok(_repo.AddKeep(setKeep));
+    }
+
+    [Authorize]
+    [HttpDelete("{id}")]
+    public ActionResult<string> DeleteKeep(int id)
+    {
+      var userId = HttpContext.User.Identity.Name;
+      if (_repo.DeleteKeep(id, userId))
       {
-        return Ok(result);
+        return Ok("deleted");
       }
       return BadRequest();
     }
 
-    // POST api/values
-    [HttpPost]
-    public ActionResult<Keep> Post([FromBody] Keep value)
-    {
-      value.UserId = HttpContext.User.Identity.Name;
-      Keep result = _repo.AddThing(value);
-      return Created("/api/keeps/" + result.Id, result);
-    }
-
-    // PUT api/values/5
     [HttpPut("{id}")]
-    public ActionResult<Keep> Put(int id, [FromBody] Keep value)
+    public ActionResult<Keep> UpdateKeep(int keepId, [FromBody] Keep editedKeep)
     {
-      if (value.Id == 0)
-      {
-        value.Id = id;
-      }
-      Keep result = _repo.EditThing(id, value);
+      Keep result = _repo.UpdateKeep(keepId, editedKeep);
       if (result != null)
       {
         return result;
       }
       return NotFound();
-    }
-
-    // DELETE api/values/5
-    [HttpDelete("{id}")]
-
-    public ActionResult<string> Delete(int id)
-    {
-
-      if (_repo.DeleteThing(id))
-      {
-        return Ok("success");
-      }
-      return BadRequest("Can't Delete");
     }
   }
 }

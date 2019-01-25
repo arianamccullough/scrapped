@@ -1,61 +1,51 @@
+using System;
 using System.Collections.Generic;
-using System.Data;
 using Dapper;
-using keepr.Models;
+using Keepr.Models;
+using System.Data;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-namespace keepr.Repositories
+namespace Keepr.Repositories
 {
+
   public class VaultKeepRepository
   {
     private readonly IDbConnection _db;
+
     public VaultKeepRepository(IDbConnection db)
     {
       _db = db;
-
     }
 
-
-    //GetKeepsbyVault
-    public IEnumerable<Keep> GetKeepsByVaultId(int id, string userId)
+    // Get VKs  
+    public IEnumerable<Keep> GetVaultKeeps(int vaultId, string userId)
     {
       return _db.Query<Keep>($@"
-        SELECT * FROM vaultkeeps vk
-        INNER JOIN keep k ON k.id = vk.keepId
-        WHERE (vaultId = @id);
-      ", new { id });
+      SELECT * FROM vaultkeeps vk
+      INNER JOIN keeps k ON k.id = vk.keepId
+      WHERE(vaultId = @vaultId AND vk.userId = @userId)",
+    new { vaultId, userId });
     }
 
 
-
-    //AddVaultKeep
-    public VaultKeep AddThing(VaultKeep vk)
+    //Add VK
+    public VaultKeep AddVaultKeep(VaultKeep vaultKeep)
     {
       int id = _db.ExecuteScalar<int>(@"
-      INSERT INTO vaultkeeps(keepId, vaultId, userId)
-      VALUES(@KeepId, @VaultId, @UserId);
-      SELECT LAST_INSERT_ID();
-      ", vk);
-      vk.Id = id;
-      return vk;
+            INSERT INTO vaultkeeps(vaultId, keepId, userId)
+            VALUES(@VaultId, @KeepId, @UserId);
+            SELECT LAST_INSERT_ID();
+            ", vaultKeep);
+      vaultKeep.Id = id;
+      return vaultKeep;
     }
 
-    // update
-    // public VaultKeep EditThing(VaultKeep vk)
-    // {
-    //   _db.Execute(@"
-    //   UPDATE vaultkeeps SET (userId, vaultId, keepId")
-    //   VALUES (@UserId, @GetKeepsByVaultId, @KeepId)
-    //   WHERE id = @id", vk);
-    //   return vk;
-    // }
-
-    //DeleteVaultKeep
-
-    public bool DeleteThing(VaultKeep vk)
+    //Delete VK
+    public bool DeleteVaultKeep(int vaultId, int keepId, string userId)
     {
-      int success = _db.Execute(@"DELETE FROM vaultkeeps WHERE keepId = @KeepId AND vaultId = @VaultId", vk);
+      int success = _db.Execute($@"DELETE FROM vaultkeeps WHERE vaultId = @vaultId AND keepId = @keepId AND userId = @userId", new { vaultId, keepId, userId });
       return success != 0;
-
     }
 
 

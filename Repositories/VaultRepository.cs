@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using Dapper;
-using keepr.Models;
+using Keepr.Models;
+using System.Data;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-namespace keepr.Repositories
+namespace Keepr.Repositories
 {
+
   public class VaultRepository
   {
     private readonly IDbConnection _db;
@@ -14,53 +17,39 @@ namespace keepr.Repositories
     {
       _db = db;
     }
-
-
-
-    public IEnumerable<Vault> GetAll()
+    //GetVaultsByVaultId
+    public Vault GetById(int id, string userId)
     {
-      return _db.Query<Vault>("SELECT * FROM vaults;");
+      return _db.QueryFirstOrDefault<Vault>($@"SELECT * FROM vaults WHERE id = @id AND userId = @userId", new { id, userId });
     }
 
-    public Vault GetById(int id)
+    //get user's vaults
+    public IEnumerable<Vault> GetUserVaults(string userId)
     {
-      //super important to sanitize data
-      return _db.QueryFirstOrDefault<Vault>($"SELECT * FROM vaults WHERE id= @id", new { id });
+      return _db.Query<Vault>($@"SELECT * FROM vaults WHERE userId = @userId", new { userId });
     }
 
-    public Vault AddThing(Vault newthing)
+    //add a vault
+    public VaultModel AddVault(VaultModel newVault)
     {
-      int id = _db.ExecuteScalar<int>(@"INSERT INTO vaults
-(name, description, location)
-VALUES (@Name, @Description, @Location);
-SELECT LAST_INSERT_ID();", newthing
-      );
+      int id = _db.ExecuteScalar<int>(@"INSERT INTO Vaults (userId, name, description, location)
+      VALUES (@UserId, @Name, @Description, @Location);
+      SELECT LAST_INSERT_ID();", newVault);
       if (id == 0)
       {
         return null;
       }
-      newthing.Id = id;
-      return newthing;
+      newVault.Id = id;
+      return newVault;
     }
 
-    public Vault EditThing(int id, Vault newthing)
+    //delete a vault
+    public bool DeleteVault(int vaultId, string userId)
     {
-
-      return _db.QueryFirstOrDefault<Vault>($@"UPDATE vaults SET
-      Name = @Name,
-      Description = @Description 
-      Location = @Location,
-      WHERE Id = @id;
-      SELECT * FROM vaults WHERE id = @Id;", newthing);
-    }
-
-
-    public bool DeleteThing(int id)
-    {
-
-      int success = _db.Execute(@"DELETE FROM vaults WHERE id = @id", new { id });
+      int success = _db.Execute(@"DELETE FROM Vaults WHERE id = @vaultId AND userId = @userId", new { vaultId, userId });
       if (success == 0) return false;
       return true;
     }
+
   }
 }

@@ -2,78 +2,75 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using keepr.Models;
-using keepr.Repositories;
+using Keepr.Models;
+using Keepr.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace keepr.Controllers
+namespace Keepr.Controllers
 {
+
   [Route("api/[controller]")]
   [ApiController]
+
   public class VaultsController : ControllerBase
   {
     private readonly VaultRepository _repo;
-    public VaultsController(VaultRepository repo)
+    public VaultsController(VaultRepository vaultRepo)
     {
-      _repo = repo;
+      _repo = vaultRepo;
     }
 
-    // GET api/values
+    //GetUsersVaults
     [HttpGet]
-
-    public ActionResult<IEnumerable<Vault>> Get()
+    [Authorize]
+    public ActionResult<IEnumerable<Vault>> GetUserVaults()
     {
+      var id = HttpContext.User.Identity.Name;
+      IEnumerable<Vault> result = _repo.GetUserVaults(id);
+      return Ok(result);
 
-      return Ok(_repo.GetAll());
     }
 
-    // GET api/values/5
+    //GetVaultByVaultID
+    [Authorize]
     [HttpGet("{id}")]
-
-    public ActionResult<IEnumerable<Vault>> Get(int id)
+    public ActionResult<Vault> GetById(int id)
     {
-      var uid = HttpContext.User.Identity.Name;
-      Vault result = _repo.GetById(id);
-      if (result != null)
-      {
-        return Ok(result);
-      }
-      return BadRequest();
+      var uId = HttpContext.User.Identity.Name;
+      Vault result = _repo.GetById(id, uId);
+      return Ok(result);
     }
 
-    // POST api/values
+
+
+    //addVault
+    [Authorize]
     [HttpPost]
-    public ActionResult<Vault> Post([FromBody] Vault value)
+    public ActionResult<Vault> AddVault(VaultModel vault)
     {
-      Vault result = _repo.AddThing(value);
-      return Created("/api/vaults/" + result.Id, result);
+      var id = HttpContext.User.Identity.Name;
+      vault.UserId = id;
+      return Ok(_repo.AddVault(vault));
     }
 
-    // PUT api/values/5
-    [HttpPut("{id}")]
-    public ActionResult<Vault> Put(int id, [FromBody] Vault value)
+
+    //delete vault
+    [Authorize]
+    [HttpDelete("{vaultId}")]
+    public ActionResult<string> DeleteVault(int vaultId)
     {
-      if (value.Id == 0)
+      var id = HttpContext.User.Identity.Name;
+      if (_repo.DeleteVault(vaultId, id))
       {
-        value.Id = id;
+        return Ok("Successfully deleted");
       }
-      Vault result = _repo.EditThing(id, value);
-      if (result != null)
-      {
-        return result;
-      }
-      return NotFound();
+      return BadRequest("Unable to delete");
     }
 
-    // DELETE api/values/5
-    [HttpDelete("{id}")]
-    public ActionResult<string> Delete(int id)
-    {
-      if (_repo.DeleteThing(id))
-      {
-        return Ok("success");
-      }
-      return BadRequest("Can't Delete");
-    }
+
+
+
+
   }
 }

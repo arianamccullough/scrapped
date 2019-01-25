@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using keepr.Models;
-using keepr.Repositories;
+using Keepr.Models;
+using Keepr.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace keepr.Controllers
+namespace Keepr.Controllers
 {
   [Route("api/[controller]")]
   [ApiController]
+
   public class VaultKeepsController : ControllerBase
   {
     private readonly VaultKeepRepository _repo;
@@ -19,13 +20,13 @@ namespace keepr.Controllers
       _repo = repo;
     }
 
-    //Get
+    //get VKs
     [Authorize]
-    [HttpGet("{id}")]
-    public ActionResult<IEnumerable<Keep>> GetbyId(int id)
+    [HttpGet("{vaultId}")]
+    public ActionResult<IEnumerable<Keep>> GetVaultKeeps(int vaultId)
     {
       var userId = HttpContext.User.Identity.Name;
-      var result = _repo.GetKeepsByVaultId(id, userId);
+      IEnumerable<Keep> result = _repo.GetVaultKeeps(vaultId, userId);
       if (result != null)
       {
         return Ok(result);
@@ -33,41 +34,29 @@ namespace keepr.Controllers
       return BadRequest();
     }
 
-    // POST api/values
-    [HttpPost]
-    public ActionResult<VaultKeep> Post([FromBody] VaultKeep value)
-    {
-      value.UserId = HttpContext.User.Identity.Name;
-      _repo.AddThing(value);
-      return value;
-    }
-
-    // PUT api/values/5
-    // [HttpPut("{id}")]
-    // public ActionResult<VaultKeep> Put(int id, [FromBody] VaultKeep value)
-    // {
-    //   if (value.Id == 0)
-    //   {
-    //     value.Id = id;
-    //   }
-    //   VaultKeep result = _repo.EditThing(id, value);
-    //   if (result != null)
-    //   {
-    //     return Ok(result);
-    //   }
-    //   return NotFound();
-    // }
-
-    // DELETE api/values/5
+    //Add VKs
     [Authorize]
-    [HttpDelete("{id}")]
-    public ActionResult<string> Delete(VaultKeep vk)
+    [HttpPost]
+    public ActionResult<VaultKeep> AddVaultKeep([FromBody] VaultKeep vaultKeep)
     {
-      if (_repo.DeleteThing(vk))
-      {
-        return Ok("successfully deleted vaultkeep");
-      }
-      return BadRequest("Can't Delete");
+      vaultKeep.UserId = HttpContext.User.Identity.Name;
+      VaultKeep result = _repo.AddVaultKeep(vaultKeep);
+      return Created("/api/vaultkeeps/" + result.Id, result);
     }
+
+    //Delete VKs
+
+    [HttpDelete("{vaultId}/{keepId}")]
+    public ActionResult<string> DeleteVaultKeep(int vaultId, int keepId)
+    {
+      var userId = HttpContext.User.Identity.Name;
+      if (_repo.DeleteVaultKeep(vaultId, keepId, userId))
+      {
+        return Ok("deleted");
+      }
+      return BadRequest();
+    }
+
+
   }
 }

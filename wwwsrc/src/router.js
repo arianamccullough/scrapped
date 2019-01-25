@@ -4,12 +4,12 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 // @ts-ignore
 import Login from './views/Login.vue'
-// @ts-ignore
-import OneKeep from './views/OneKeep.vue'
-// @ts-ignore
-import OneVault from './views/OneVault.vue'
-// @ts-ignore
+//@ts-ignore
 import Dashboard from './views/Dashboard.vue'
+//@ts-ignore
+import Keeps from './views/Keep.vue'
+//@ts-ignore
+import Vault from './views/Vault.vue'
 
 Vue.use(Router)
 
@@ -25,23 +25,20 @@ export default new Router({
       name: 'login',
       component: Login
     },
-
-    {
-      path: '/keeps/:keepId',
-      name: 'onekeep',
-      props: true,
-      component: OneKeep
-    },
-    {
-      path: '/vaults/:vaultId',
-      name: 'onevault',
-      props: true,
-      component: OneVault
-    },
     {
       path: '/dashboard',
       name: 'dashboard',
       component: Dashboard
+    },
+    {
+      path: '/keeps/:keepId',
+      name: 'keep',
+      component: Keeps
+    },
+    {
+      path: '/vaults/:vaultId',
+      name: 'vault',
+      component: Vault
     }
   ]
 })

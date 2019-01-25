@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using Dapper;
-using keepr.Models;
+using Keepr.Models;
+using System.Data;
+using Microsoft.AspNetCore.Http;
 
-namespace keepr.Repositories
+namespace Keepr.Repositories
 {
+
   public class KeepRepository
   {
     private readonly IDbConnection _db;
@@ -14,55 +16,69 @@ namespace keepr.Repositories
     {
       _db = db;
     }
-
-
-
-    public IEnumerable<Keep> GetAll()
+    //get everyone's keeps
+    public IEnumerable<Keep> GetHomeKeeps()
     {
-      return _db.Query<Keep>("SELECT * FROM keeps;");
+      return _db.Query<Keep>("SELECT * FROM keeps WHERE isPrivate = 0");
     }
 
-    public Keep GetById(int id)
+    //get my keeps
+    public IEnumerable<Keep> GetMyKeeps(string userId)
     {
-      //super important to sanitize data
-      return _db.QueryFirstOrDefault<Keep>($"SELECT * FROM keeps WHERE id= @id", new { id });
+      return _db.Query<Keep>("SELECT * FROM keeps WHERE userId = @userId", new { userId });
     }
 
-    public Keep AddThing(Keep newthing)
+    //get a single keep
+    public Keep GetAKeep(int keepId)
     {
-      int id = _db.ExecuteScalar<int>(@"INSERT INTO keeps
-(name, description, img, views, saves, location, isprivate, userId)
-VALUES (@Name, @Description, @Img, @Views, @Saves, @Location, @IsPrivate, @UserId);
-SELECT LAST_INSERT_ID();", newthing
-      );
+      return _db.QueryFirstOrDefault<Keep>("SELECT * FROM keeps WHERE id = @keepId", new { keepId });
+    }
+
+    //add a keep
+    public KeepModel AddKeep(KeepModel setKeep)
+    {
+      int id = _db.ExecuteScalar<int>($@"INSERT INTO Keeps (name, description, userId, isPrivate, img, views, saves)
+      VALUES (@Name, @Description, @UserId, @IsPrivate, @Img, @Views, @Saves);
+      SELECT LAST_INSERT_ID();", setKeep);
       if (id == 0)
       {
         return null;
       }
-      newthing.Id = id;
-      return newthing;
+      setKeep.Id = id;
+      return setKeep;
     }
 
-    public Keep EditThing(int id, Keep newthing)
+    public bool DeleteKeep(int keepId, string userId)
     {
-
-      return _db.QueryFirstOrDefault<Keep>($@"UPDATE keeps SET
-      Name = @Name,
-      Description = @Description,
-      Img = @Img,
-      View = @View,
-      Save = @Save,
-      WHERE Id = @id;
-      SELECT * FROM keeps WHERE id = @Id;", newthing);
+      int success = _db.Execute(@"DELETE FROM Keeps WHERE id = @keepId AND userId = @userId", new { keepId, userId });
+      return success != 0;
     }
 
-
-    public bool DeleteThing(int id)
+    public Keep UpdateKeep(int id, Keep updatedKeep)
     {
+      try
+      {
+        return _db.QueryFirstOrDefault<Keep>($@" UPDATE keeps SET
+        Id = @Id,
+        UserId = @UserId,
+        Name = @Name,
+        Description = @Description,
+        Img = @Img,
+        IsPrivate = @IsPrivate,
+        Views = @Views,
+        Saves = @Saves
+        WHERE id = @Id;
 
-      int success = _db.Execute(@"DELETE FROM keeps WHERE id = @id", new { id });
-      if (success == 0) return false;
-      return true;
+        SELECT * FROM keeps WHERE id = @Id;
+        ", updatedKeep);
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine(ex);
+        return null;
+      }
     }
+
   }
 }
+
